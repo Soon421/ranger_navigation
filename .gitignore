@@ -1,0 +1,41 @@
+# ROS 2 빌드 및 개발 관련 파일
+build/
+install/
+log/
+
+# Python 관련 파일
+*.pyc
+__pycache__/
+*.egg-info/
+dist/
+build/
+
+# C++ 빌드 관련 파일
+*.o
+*.so
+*.a
+*.out
+*.exe
+*~
+
+# IDE 및 에디터 설정 파일
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 기타
+Thumbs.db
+.DS_Store
+analyze_path_error.py
+generate_chart.py
+
+# Rosbag
+*.bag
+*.db3
+metadata.yaml
+rosbag2_*
+
+map_2D/
+map_3D/
+

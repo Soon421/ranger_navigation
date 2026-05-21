@@ -1,0 +1,4 @@
+goal_publisher:
+  ros__parameters:
+    arrival_threshold: 1.4  # meters
+    timer_period: 0.1       # seconds

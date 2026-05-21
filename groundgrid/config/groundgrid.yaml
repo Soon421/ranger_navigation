@@ -1,0 +1,48 @@
+groundgrid:
+  ros__parameters:
+    # Note: Topic settings (sensor_frame, odom_topic, points_topic) are configured
+    # via launch arguments, not here. See groundgrid_with_occupancy.launch.py
+
+    # Ground patch detection parameters
+    point_count_cell_variance_threshold: 10  # If a cell has at least this many points, use cell variance instead of patch variance (0-30)
+    max_ring: 1024  # Maximum velodyne ring for ground detection consideration (0-1024)
+    groundpatch_detection_minimum_threshold: 0.01  # Below this value, cells can be classified as ground without minimum point count (0-1.0)
+
+    # Distance compensation
+    distance_factor: 0.00002  # Compensates for geometric dilution of point density with distance (0-0.01)
+    minimum_distance_factor: 0.0001  # Minimum value for distance factor (0-0.01)
+
+    # Point height thresholds
+    miminum_point_height_threshold: 0.05  # Points lower than ground + threshold are ground points [m] (0-1)
+    minimum_point_height_obstacle_threshold: 0.02  # Minimum height threshold for obstacles [m] (0-0.2)
+
+    # Ground detection tuning
+    outlier_tolerance: 0.03  # Outlier detection tolerance [m] (-0.5-0.5)
+    ground_patch_detection_minimum_point_count_threshold: 0.25  # Min point count as percent of expected (0.01-1.0)
+    patch_size_change_distance: 20.0  # Distance from center where patch size increases [m] (0-50)
+
+    # Occupied cells parameters
+    occupied_cells_decrease_factor: 5.0  # Occupied cells decrease factor [100/x %] (1-100)
+    occupied_cells_point_count_factor: 20.0  # Occupied cells point count factor (1-50)
+
+    # Outlier detection
+    min_outlier_detection_ground_confidence: 1.25  # Min ground confidence to consider lower points as outlier (0-5)
+
+    # Performance
+    thread_count: 16  # Number of threads for parallel processing (1-64)
+
+
+occupancy_map_generator:
+  ros__parameters:
+    # Map generation parameters
+    resolution: 0.1  # Map resolution [m/pixel]
+    groundpatch_threshold: 0.3  # Threshold for ground patch confidence
+    nonground_intensity_threshold: 90.0  # Intensity threshold for non-ground points (segmented cloud uses 99 for obstacles)
+
+    # Obstacle filtering
+    obstacle_min_radius: 3.0  # Minimum distance from sensor to consider obstacles [m]
+    obstacle_max_height: 1.5  # Maximum height above sensor to consider as obstacle [m]
+    obstacle_count_threshold: 3  # Minimum obstacle count to mark cell as occupied
+
+    # Occupancy calculation
+    free_to_occupied_ratio: 3.0  # Ratio of free to occupied counts to mark as free
