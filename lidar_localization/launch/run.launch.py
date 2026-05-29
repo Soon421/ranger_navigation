@@ -12,19 +12,31 @@ def generate_launch_description():
     parameter_file = LaunchConfiguration('params_file')
     map_file = LaunchConfiguration('map_file')
     use_sim_time = LaunchConfiguration('use_sim_time')
+    sensor = LaunchConfiguration('sensor')
 
     # 온라인(실시간): rviz2.rviz, 오프라인(rosbag): rviz2_localization.rviz
     rviz_config_file = LaunchConfiguration('rviz_config')
 
+    # 가상 센서 선택: sensor:=xt32 또는 sensor:=vlp16
+    # -> config/params_<sensor>.yaml 을 자동으로 사용.
+    # params_file 을 직접 넘기면 그 값이 우선한다.
+    sensor_declare = DeclareLaunchArgument(
+        'sensor',
+        default_value='xt32',
+        description="Simulated lidar preset to use: 'xt32' or 'vlp16' "
+                    "(selects config/params_<sensor>.yaml).")
+
     params_declare = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(
-            share_dir, 'config', 'params.yaml'),
-        description='Path to the ROS2 parameters file to use.')
+        default_value=PythonExpression(
+            ["'", os.path.join(share_dir, 'config', 'params_'),
+             "' + '", sensor, "' + '.yaml'"]),
+        description='Path to the ROS2 parameters file to use. '
+                    'Overrides the sensor preset when set explicitly.')
 
     map_file_declare = DeclareLaunchArgument(
         'map_file',
-        default_value=os.path.join(share_dir, 'map_3D', 'gongdae_all_map_0.4.pcd'),
+        default_value=os.path.join(share_dir, 'map_3D', '03_18_Isaacmap.pcd'),
         description='Path to the global map PCD file for localization.')
 
     use_sim_time_declare = DeclareLaunchArgument(
@@ -38,6 +50,7 @@ def generate_launch_description():
         description='Path to the RViz config file')
 
     return LaunchDescription([
+        sensor_declare,
         params_declare,
         map_file_declare,
         use_sim_time_declare,

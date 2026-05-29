@@ -105,6 +105,10 @@ public:
     int downsampleRate;
     float lidarMinRange;
     float lidarMaxRange;
+    // Vertical FOV (deg), used to compute the scan ring when the point cloud
+    // has no "ring" channel (e.g. simulated lidars such as Isaac Sim).
+    float lidarVerticalFovUp;
+    float lidarVerticalFovDown;
 
     // IMU
     float imuAccNoise;
@@ -232,6 +236,10 @@ public:
         get_parameter("lidarMinRange", lidarMinRange);
         declare_parameter("lidarMaxRange", 1000.0);
         get_parameter("lidarMaxRange", lidarMaxRange);
+        declare_parameter("lidarVerticalFovUp", 22.5);
+        get_parameter("lidarVerticalFovUp", lidarVerticalFovUp);
+        declare_parameter("lidarVerticalFovDown", -22.5);
+        get_parameter("lidarVerticalFovDown", lidarVerticalFovDown);
 
         declare_parameter("imuAccNoise", 9e-4);
         get_parameter("imuAccNoise", imuAccNoise);

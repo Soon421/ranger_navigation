@@ -37,8 +37,8 @@
     # Vertical FOV (deg). Only used when the point cloud has no "ring" channel
     # (e.g. Isaac Sim / simulated lidars). Set these to match your sensor's
     # upper/lower vertical FOV so points are binned into the correct scan ring.
-    lidarVerticalFovUp: 22.5                      # upper vertical FOV in degrees
-    lidarVerticalFovDown: -22.5                   # lower vertical FOV in degrees
+    lidarVerticalFovUp: 15.0                      # Hesai PandarXT-32: +15 deg
+    lidarVerticalFovDown: -16.0                   # Hesai PandarXT-32: -16 deg
 
     # IMU Settings
     imuAccNoise: 3.9939570888238808e-03

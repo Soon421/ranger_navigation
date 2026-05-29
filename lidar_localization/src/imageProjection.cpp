@@ -294,8 +294,14 @@ public:
                 if (sensor == SensorType::VELODYNE) {
                     ringFlag = 2;
                 } else {
-                    RCLCPP_ERROR(get_logger(), "Point cloud ring channel not available, please configure your point cloud data!");
-                    rclcpp::shutdown();
+                    // No ring channel (e.g. simulated lidar such as Isaac Sim).
+                    // Instead of aborting, compute the ring downstream from the
+                    // point vertical angle using the configured vertical FOV.
+                    RCLCPP_WARN(get_logger(),
+                        "Point cloud ring channel not available; computing ring from vertical angle "
+                        "(FOV %.1f..%.1f deg over %d scans). Set lidarVerticalFovDown/Up to match your sensor.",
+                        lidarVerticalFovDown, lidarVerticalFovUp, N_SCAN);
+                    ringFlag = 3;
                 }
             }
         }
@@ -573,12 +579,21 @@ public:
 
             int rowIdn = laserCloudIn->points[i].ring;
             // if sensor is a velodyne (ringFlag = 2) calculate rowIdn based on number of scans
-            if (ringFlag == 2) { 
+            if (ringFlag == 2) {
                 float verticalAngle =
                     atan2(thisPoint.z,
                         sqrt(thisPoint.x * thisPoint.x + thisPoint.y * thisPoint.y)) *
                     180 / M_PI;
                 rowIdn = (verticalAngle + (N_SCAN - 1)) / 2.0;
+            }
+            // no ring channel (ringFlag = 3): map vertical angle onto the configured FOV
+            else if (ringFlag == 3) {
+                float verticalAngle =
+                    atan2(thisPoint.z,
+                        sqrt(thisPoint.x * thisPoint.x + thisPoint.y * thisPoint.y)) *
+                    180 / M_PI;
+                rowIdn = round((lidarVerticalFovUp - verticalAngle) /
+                    (lidarVerticalFovUp - lidarVerticalFovDown) * (N_SCAN - 1));
             }
 
             if (rowIdn < 0 || rowIdn >= N_SCAN)

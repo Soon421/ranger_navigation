@@ -1,5 +1,5 @@
 # =============================================================================
-# Nav2 Parameters for Ranger Mini (Dual Ackermann) Navigation
+# Nav2 Parameters for Ranger Mini (Dual Ackermann) - Isaac Sim (PointCloud2)
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -173,20 +173,19 @@ local_costmap:
         cost_scaling_factor: 3.0
         inflation_radius: 0.5         # m  (global과 통일)
 
-      # Obstacle layer - 2D LaserScan (slope-robust, 단순)
+      # Obstacle layer - Isaac Sim RTX LiDAR PointCloud2
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
-        observation_sources: scan
-        scan:
-          topic: /ouster/scan
-          data_type: "LaserScan"
+        observation_sources: pointcloud
+        pointcloud:
+          topic: /velodyne_points
+          data_type: "PointCloud2"
           clearing: True
           marking: True
-          # Ouster가 base_link 기준 z=0.284m 마운트라 height filter가 0이면 전부 drop됨.
-          min_obstacle_height: 0.0    # m
-          max_obstacle_height: 2.0    # m
-          inf_is_valid: true
+          # PointCloud2 높이 필터: 지면/천장 포인트 제거
+          min_obstacle_height: 0.25   # m
+          max_obstacle_height: 1.0    # m
           raytrace_max_range: 8.5     # m
           raytrace_min_range: 0.0     # m
           obstacle_max_range: 8.0     # m
@@ -213,19 +212,19 @@ global_costmap:
       transform_tolerance: 0.5        # sec
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
 
-      # Obstacle layer - 2D LaserScan (slope-robust, 단순)
+      # Obstacle layer - Isaac Sim RTX LiDAR PointCloud2
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
-        observation_sources: scan
-        scan:
-          topic: /ouster/scan
-          data_type: "LaserScan"
+        observation_sources: pointcloud
+        pointcloud:
+          topic: /velodyne_points
+          data_type: "PointCloud2"
           clearing: True
           marking: True
-          min_obstacle_height: 0.0    # m
-          max_obstacle_height: 2.0    # m
-          inf_is_valid: true
+          # PointCloud2 높이 필터: 지면/천장 포인트 제거
+          min_obstacle_height: 0.35   # m
+          max_obstacle_height: 1.0    # m
           raytrace_max_range: 8.3     # m
           raytrace_min_range: 0.0     # m
           obstacle_max_range: 7.5     # m
@@ -377,8 +376,10 @@ collision_monitor:
       polygon_pub_topic: "polygon_slowdown"
       enabled: True
 
-    observation_sources: ["scan"]
-    scan:
-      type: "scan"
-      topic: "/ouster/scan"
+    observation_sources: ["pointcloud"]
+    pointcloud:
+      type: "pointcloud"
+      topic: "/velodyne_points"
+      min_height: 0.1                # m
+      max_height: 2.0                # m
       enabled: True
