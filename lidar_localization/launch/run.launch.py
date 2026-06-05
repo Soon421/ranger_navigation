@@ -22,8 +22,8 @@ def generate_launch_description():
     # params_file 을 직접 넘기면 그 값이 우선한다.
     sensor_declare = DeclareLaunchArgument(
         'sensor',
-        default_value='xt32',
-        description="Simulated lidar preset to use: 'xt32' or 'vlp16' "
+        default_value='ouster32',
+        description="Simulated lidar preset to use: 'ouster32' or 'vlp16' "
                     "(selects config/params_<sensor>.yaml).")
 
     params_declare = DeclareLaunchArgument(
