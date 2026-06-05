@@ -41,9 +41,20 @@ controller_server:
       xy_goal_tolerance: 0.35         # m  (Ackermann 강제로 정밀 yaw 어려워 완화)
       yaw_goal_tolerance: 0.35        # rad (≈ 20°)
 
-    # MPPI Controller - Model Predictive Path Integral controller
+    # RotationShimController - 큰 heading 오차(예: 180° 뒤 goal) 시 제자리 회전으로
+    # 경로 방향에 먼저 정렬한 뒤 MPPI로 인계. ranger_base는 pure rotation을
+    # SPINNING 모드로 처리하므로 Ackermann 3-point-turn 없이 자연스럽게 선회함.
     FollowPath:
-      plugin: "nav2_mppi_controller::MPPIController"
+      plugin: "nav2_rotation_shim_controller::RotationShimController"
+      primary_controller: "nav2_mppi_controller::MPPIController"
+      angular_dist_threshold: 0.785        # rad(45°). 경로 시작 heading 오차가 이보다 크면 제자리 회전 트리거
+      forward_sampling_distance: 0.5       # m. 경로 위 이 거리 지점의 heading을 정렬 목표로 사용
+      rotate_to_heading_angular_vel: 1.0   # rad/s (MPPI wz_max와 통일)
+      max_angular_accel: 3.2               # rad/s^2 (velocity_smoother와 통일)
+      simulate_ahead_time: 1.0             # sec. 회전 중 충돌 예측 시간
+      rotate_to_goal_heading: true         # goal 최종 yaw도 제자리 회전으로 정렬
+
+      # --- 이하 primary controller(MPPI) 파라미터 ---
       time_steps: 28
       model_dt: 0.1                   # sec
       batch_size: 3000
@@ -208,7 +219,7 @@ global_costmap:
       global_frame: map
       robot_base_frame: base_link
       robot_radius: 0.3               # m
-      resolution: 0.05                # m/cell
+      resolution: 0.1                 # m/cell
       track_unknown_space: true
       transform_tolerance: 0.5        # sec
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]

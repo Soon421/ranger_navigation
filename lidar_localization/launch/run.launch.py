@@ -36,7 +36,7 @@ def generate_launch_description():
 
     map_file_declare = DeclareLaunchArgument(
         'map_file',
-        default_value=os.path.join(share_dir, 'map_3D', '03_18_Isaacmap.pcd'),
+        default_value=os.path.join(share_dir, 'map_3D', 'campus.pcd'),
         description='Path to the global map PCD file for localization.')
 
     use_sim_time_declare = DeclareLaunchArgument(
