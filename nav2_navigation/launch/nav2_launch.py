@@ -19,8 +19,8 @@ def generate_launch_description():
 
     # Paths
     nav2_launch_file = os.path.join(isr_nav_dir, 'launch', 'navigation_launch.py')
-    default_params_file = os.path.join(isr_nav_dir, 'config', 'ranger_mini_params.yaml')
-    default_map_file = os.path.join(isr_nav_dir, 'map_2D', 'campus.yaml')
+    default_params_file = os.path.join(isr_nav_dir, 'config', 'ranger_isaac_params.yaml')
+    default_map_file = os.path.join(isr_nav_dir, 'map_2D', 'isaacmap.yaml')
     goal_publisher_params_file = os.path.join(isr_nav_dir, 'config', 'goal_publisher_params.yaml')
 
     # Declare arguments

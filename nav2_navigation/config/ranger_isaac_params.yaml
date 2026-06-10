@@ -190,7 +190,7 @@ local_costmap:
         enabled: True
         observation_sources: pointcloud
         pointcloud:
-          topic: /velodyne_points
+          topic: /ouster/points
           data_type: "PointCloud2"
           clearing: True
           marking: True
@@ -229,7 +229,7 @@ global_costmap:
         enabled: True
         observation_sources: pointcloud
         pointcloud:
-          topic: /velodyne_points
+          topic: /ouster/points
           data_type: "PointCloud2"
           clearing: True
           marking: True
@@ -390,7 +390,7 @@ collision_monitor:
     observation_sources: ["pointcloud"]
     pointcloud:
       type: "pointcloud"
-      topic: "/velodyne_points"
+      topic: "/ouster/points"
       min_height: 0.1                # m
       max_height: 2.0                # m
       enabled: True
