@@ -28,7 +28,7 @@ def generate_launch_description():
     )
     scan_ring_arg = DeclareLaunchArgument(
         'scan_ring',
-        default_value='16',
+        default_value='14',
         description='Ouster beam index used for /ouster/scan LaserScan. 16 ≈ horizontal for OS-32.',
     )
 
