@@ -13,6 +13,7 @@ def generate_launch_description():
     map_file = LaunchConfiguration('map_file')
     use_sim_time = LaunchConfiguration('use_sim_time')
     sensor = LaunchConfiguration('sensor')
+    lidar_frame = LaunchConfiguration('lidar_frame')
 
     # 온라인(실시간): rviz2.rviz, 오프라인(rosbag): rviz2_localization.rviz
     rviz_config_file = LaunchConfiguration('rviz_config')
@@ -49,12 +50,23 @@ def generate_launch_description():
         default_value=os.path.join(share_dir, 'config', 'rviz2.rviz'),
         description='Path to the RViz config file')
 
+    # lidarFrame 은 lidar_frame 인자로 직접 지정한다.
+    #   실외 실제 Ouster -> os_lidar (기본값)
+    #   Isaac Sim 가상주행 -> lidar_frame:=os_sensor
+    lidar_frame_declare = DeclareLaunchArgument(
+        'lidar_frame',
+        default_value='os_lidar',
+        description="LiDAR TF frame. Real Ouster: os_lidar (default). "
+                    "Isaac Sim: set lidar_frame:=os_sensor. "
+                    "Overrides the params yaml value.")
+
     return LaunchDescription([
         sensor_declare,
         params_declare,
         map_file_declare,
         use_sim_time_declare,
         rviz_config_declare,
+        lidar_frame_declare,
 
         # Global map server for localization
         Node(
@@ -86,28 +98,32 @@ def generate_launch_description():
             package='lidar_localization',
             executable='lidar_localization_imuPreintegration',
             name='lidar_localization_imuPreintegration',
-            parameters=[parameter_file, {'use_sim_time': use_sim_time}],
+            parameters=[parameter_file, {'use_sim_time': use_sim_time,
+                                         'lidarFrame': lidar_frame}],
             output='screen'
         ),
         Node(
             package='lidar_localization',
             executable='lidar_localization_imageProjection',
             name='lidar_localization_imageProjection',
-            parameters=[parameter_file, {'use_sim_time': use_sim_time}],
+            parameters=[parameter_file, {'use_sim_time': use_sim_time,
+                                         'lidarFrame': lidar_frame}],
             output='screen'
         ),
         Node(
             package='lidar_localization',
             executable='lidar_localization_featureExtraction',
             name='lidar_localization_featureExtraction',
-            parameters=[parameter_file, {'use_sim_time': use_sim_time}],
+            parameters=[parameter_file, {'use_sim_time': use_sim_time,
+                                         'lidarFrame': lidar_frame}],
             output='screen'
         ),
         Node(
             package='lidar_localization',
             executable='lidar_localization_localizationOptimization',
             name='lidar_localization_localizationOptimization',
-            parameters=[parameter_file, {'use_sim_time': use_sim_time}],
+            parameters=[parameter_file, {'use_sim_time': use_sim_time,
+                                         'lidarFrame': lidar_frame}],
             output='screen'
         ),
 
